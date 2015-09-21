@@ -1,7 +1,8 @@
 #ifndef sonar_bvt_sdk_TYPES_HPP
 #define sonar_bvt_sdk_TYPES_HPP
 
-#include "bvt_sdk.h"
+//#include "bvt_sdk.h"
+#include <iostream>
 /* If you need to define types specific to your oroGen components, define them
  * here. Required headers must be included explicitly
  *
@@ -21,12 +22,12 @@ namespace sonar_bvt_sdk
         std::string model_name;
         std::string sonar_name;
         int orientation;
-        BVTSDK::NetworkSettings;
+        //BVTSDK::NetworkSettings;
         bool support_target_tracking;
         bool support_source_level_control;
         bool support_external_hardware_trigger;
         float source_level;
-    } 
+    };
 }
 
 #endif

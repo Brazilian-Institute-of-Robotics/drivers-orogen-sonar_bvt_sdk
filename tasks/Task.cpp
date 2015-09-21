@@ -34,14 +34,24 @@ bool Task::configureHook()
 //necessary to create a input port that will receive data from the rotation motor and set the
 //bvt orientation using PutOrientation and retrieve with GetOrientation;
 // - see what is EventMark class;
+
+/*try
+{
+if (son.SupportsSourceLevelControl())
+    son.SourceLevel(_source_level.get();
+}
+catch
+{
+
+}
+*/
     if (! TaskBase::configureHook())
         return false;
 
     char DataFile[] = "/home/diego/Programas/rock/drivers/sonar_bvt_sdk/data/swimmer.son";
 
-    int ret;
     // Create a new BVTSonar Object
-    BVTSonar son = BVTSonar_Create();
+    son = BVTSonar_Create();
     if( son == NULL )
     {
         printf("BVTSonar_Create: failed\n");
@@ -49,6 +59,7 @@ bool Task::configureHook()
     }
 
     // Open the sonar
+    int ret;
     ret = BVTSonar_Open(son, "FILE", DataFile);
     if( ret != 0 )
     {

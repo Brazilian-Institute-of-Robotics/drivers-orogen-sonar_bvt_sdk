@@ -30,11 +30,12 @@ namespace sonar_bvt_sdk{
 	friend class TaskBase;
     protected:
 
+    BVTSonar son;
 
 
     public:
         /** TaskContext constructor for Task
-         * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.
+/         * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.
          * \param initial_state The initial TaskState of the TaskContext. Default is Stopped state.
          */
         Task(std::string const& name = "sonar_bvt_sdk::Task");
