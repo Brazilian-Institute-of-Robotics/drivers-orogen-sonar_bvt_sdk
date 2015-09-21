@@ -7,6 +7,7 @@
   <url>http://</url>
   <logo>http://</logo>
   <depend package="base/cmake" />
+  <depend package="drivers/sonar_bvt_sdk" />
   <!--
    To add any dependencies use the depend tag
   <depend package="dummy-dependency-0" />

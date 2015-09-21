@@ -7,18 +7,31 @@ import_types_from "base"
 # library's pkg-config name) and then the header can be used. Following Rock
 # conventions, a common use-case would be:
 #
-using_library "sonar_bvt_sdk"
+using_library "bvt_sdk"
 using_library "opencv"
 
 task_context "Task" do
     needs_configuration
 
     property("ip_address", "/std/string")
-        .doc 'Sonar ip address'
+        .doc "Sonar ip address"
+    property("bvt_monitor", "bool", false)
+        .doc "If true, the component will write in bvt_monitor output port
+              several BVT information, such as: temperature, ..."
+    property("local_time_stamps", "bool", true)
+        .doc "Set to true to modify ping timestamps by the local computer's (running the SDK) clock.
+              *attention* Disable if this Sonar is connected to a pulse-per-second (PPS) signal."
+    property("source_level", float, -1)
+        .doc "Set the sonar's transmit source level. It is a ratio of desired value to max (0.0 to 1.0
+              *attention* Non-negative value will ALWAYS disable the auto source level mode"
+    property("auto_source_level", bool, true)
+        .doc "If sonar supports this feature, it will automatically adjust the source level based on the
+              current configured max range." 
 
     input_port "input", "/std/string"
 
     output_port "output", "int"
+    output_port("bvt_monitor", "sonar_bvt_sdk/BvtMonitor")
 
     periodic 0.1
 end
