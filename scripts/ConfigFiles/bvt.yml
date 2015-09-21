@@ -1,3 +1,35 @@
 --- name:default
+# Set the maximum (+-) raw data from the ADC.
+#               If this threshold is reached the entire signal is zeroed out so that 
+#               clipping is not propagated through out the image.  
+#               The threshold is an integer ranging from 1 to 4096 (2^12)
+clipping_thresh: 4096
+# Availables color maps: bone.cmap  cool.cmap  copper.cmap  green.cmap  hot.cmap  jet.cmap
+colormap: hot.cmap
+# File name for the sonar data
+file_name: ''
+# Set the type of water the head is in, possible values are:
+#              :Saltwater
+#              :Freshwater
+#              :Other
+fluid_type: :Saltwater
+# Set the additional analog gain in dB.
+gain: 0.0
+# Set the image processing resolution, possible values are:
+#              :Off
+#              :Low
+#              :Medium
+#              :High
+#              :Auto
+image_resolution: :Auto
 # Sonar ip address
-ip_address: ''
+ip_address: 192.168.1.45
+# Set the value for the sonar range, in meters
+range: 30.0
+# If yes, the sonar data will be saved in a file with the same name as file_name property
+save_file: false
+# Set the current speed of sound in water for this head in meters per second.
+sound_speed: 1500
+# Set the  time variable analog gain in dB/meter. Note that the parameter 
+#               is per unit distance, not per unit time.
+tvg_slope: 0.0

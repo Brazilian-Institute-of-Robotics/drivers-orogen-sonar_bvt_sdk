@@ -4,10 +4,17 @@
 #define SONAR_BVT_SDK_TASK_TASK_HPP
 
 #include "sonar_bvt_sdk/TaskBase.hpp"
-//#include "bvt_c/bvt_sdk.h"
 #include <stdio.h>
 #include "bvt_sdk.h"
+#include "bvt_cpp/bvt_imageres.hpp"
 #include <iostream>
+#include <stdexcept>
+#include <cstdlib>
+
+#include "frame_helper/FrameHelper.h"
+#include "base/samples/SonarScan.hpp"
+#include "base/samples/Sonar.hpp"
+
 
 namespace sonar_bvt_sdk{
 
@@ -30,9 +37,20 @@ namespace sonar_bvt_sdk{
 	friend class TaskBase;
     protected:
 
-    BVTSonar son;
+        BVTSDK::Sonar son;
+        BVTSDK::Sonar file;
+        BVTSDK::Head head;
+        BVTSDK::Head head_file;
+        bool first_ping;
 
-
+        base::samples::Sonar bvt_sonar;
+        void setFluidType(sonar_bvt_sdk::fluid_type::FluidType type);
+        void setImageResolution(sonar_bvt_sdk::image_resolution::ImageResolution resolution);
+        void setSonarParameters(BVTSDK::Ping &ping, BVTSDK::MagImage &img_rtheta);
+        base::samples::SonarScan convertSonarToSonarScan(base::samples::Sonar const &sonar);
+        virtual bool setGain(double value);
+        virtual bool setRange(double value);
+    
     public:
         /** TaskContext constructor for Task
 /         * \param name Name of the task. This name needs to be unique to make it identifiable via nameservices.

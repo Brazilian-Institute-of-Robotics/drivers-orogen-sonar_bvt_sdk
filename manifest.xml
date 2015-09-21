@@ -8,11 +8,4 @@
   <logo>http://</logo>
   <depend package="base/cmake" />
   <depend package="drivers/sonar_bvt_sdk" />
-  <!--
-   To add any dependencies use the depend tag
-  <depend package="dummy-dependency-0" />
-	...
-  <depend package="dummy-dependency-n-1" />
-  <depend package="dummy-dependency-n" />
-  -->
 </package>
