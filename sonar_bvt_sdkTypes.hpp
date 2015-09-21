@@ -1,7 +1,7 @@
 #ifndef sonar_bvt_sdk_TYPES_HPP
 #define sonar_bvt_sdk_TYPES_HPP
 
-#include <bvt_sdk.h>
+#include "bvt_sdk.h"
 /* If you need to define types specific to your oroGen components, define them
  * here. Required headers must be included explicitly
  *
