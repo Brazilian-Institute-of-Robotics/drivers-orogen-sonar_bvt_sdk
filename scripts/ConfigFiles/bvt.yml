@@ -5,7 +5,7 @@
 #               The threshold is an integer ranging from 1 to 4096 (2^12)
 clipping_thresh: 4096
 # Availables color maps: bone.cmap  cool.cmap  copper.cmap  green.cmap  hot.cmap  jet.cmap
-colormap: hot.cmap
+#colormap: hot.cmap
 # File name for the sonar data
 file_name: ''
 # Set the type of water the head is in, possible values are:

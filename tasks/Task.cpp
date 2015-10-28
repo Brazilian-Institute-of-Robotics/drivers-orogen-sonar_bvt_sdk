@@ -33,8 +33,9 @@ bool Task::configureHook()
     {
         // Open the sonar
         std::string ip_address = _ip_address.get();
-        son.Open("NET", _ip_address.get().c_str());
+//        son.Open("NET", _ip_address.get().c_str());
 
+        son.Open("FILE", "/home/romulo/flat_fish/dev/drivers/sonar_bvt_sdk/data/swimmer.son");
         head = son.GetHead(0);
 
         //set the range
@@ -88,65 +89,62 @@ void Task::updateHook()
 {
     TaskBase::updateHook();
 
-    try
-    {
-        //Get Ping
-        BVTSDK::Ping ping(head.GetPing(-1));
+    for (int i = 0; i < head.GetPingCount(); ++i) {
 
-        // Save ping in the file
-        if(_save_file.get())
-        {
-            head_file.PutPing(ping);
-        }
+        try {
+            //Get Ping
+//            BVTSDK::Ping ping(head.GetPing(-1));
+            BVTSDK::Ping ping(head.GetPing(i));
 
-        // Generate an image from the ping
-        BVTSDK::ImageGenerator img_gen;
-        img_gen.SetHead(head);
-
-        // Get the R-Theta image from the ping
-        BVTSDK::MagImage img_rtheta(img_gen.GetImageRTheta(ping));
-
-        // Set SonarScan parameters
-        if (first_ping)
-        {
-            this->setSonarParameters(ping, img_rtheta);
-            first_ping = false;
-        }
-
-        // Get the raw data pointer
-        unsigned short *bit_buffer = img_rtheta.GetBits();
-        bvt_sonar.bins.clear();
-
-        bvt_sonar.bin_count = img_rtheta.GetHeight();
-        int beams = bvt_sonar.beam_count;
-        int bins = bvt_sonar.bin_count;
-        bvt_sonar.bins.clear();
-        for (int i = 0; i < beams ; ++i)
-        {
-            for (int j = bins; j > 0 ; --j )
-            {
-                float value = (bit_buffer[(j*beams+i)]*1.0);
-                bvt_sonar.bins.push_back(value);
+            // Save ping in the file
+            if (_save_file.get()) {
+                head_file.PutPing(ping);
             }
+
+            // Generate an image from the ping
+            BVTSDK::ImageGenerator img_gen;
+            img_gen.SetHead(head);
+
+            // Get the R-Theta image from the ping
+            BVTSDK::MagImage img_rtheta(img_gen.GetImageRTheta(ping));
+
+            // Set SonarScan parameters
+            if (first_ping) {
+                this->setSonarParameters(ping, img_rtheta);
+                first_ping = false;
+            }
+
+            // Get the raw data pointer
+            unsigned short *bit_buffer = img_rtheta.GetBits();
+            bvt_sonar.bins.clear();
+
+            bvt_sonar.bin_count = img_rtheta.GetHeight();
+            int beams = bvt_sonar.beam_count;
+            int bins = bvt_sonar.bin_count;
+            bvt_sonar.bins.clear();
+            for (int i = 0; i < beams; ++i) {
+                for (int j = bins; j > 0; --j) {
+                    // normalize raw data with its maximum value (2^13)
+                    float value = (bit_buffer[(j * beams + i)] * 1.0 / 8191);
+                    bvt_sonar.bins.push_back(value);
+                }
+            }
+
+            bvt_sonar.time = base::Time::now();
+            _sonar_output.write(bvt_sonar);
+
+            base::samples::SonarScan bvt_scan;
+            bvt_scan = convertSonarToSonarScan(bvt_sonar);
+            _sonar_scan.write(bvt_scan);
+
+            float temperature;
+            if (son.TryGetTemperature(&temperature)) {
+                _sonar_temperature.write((double) son.GetTemperature());
+            }
+        } catch (BVTSDK::SdkException &e) {
+            std::cout << e.ErrorName() << std::endl;
+            throw std::runtime_error(e.ErrorMessage());
         }
-
-        bvt_sonar.time = base::Time::now();
-        _sonar_output.write(bvt_sonar);
-
-        base::samples::SonarScan bvt_scan;
-        bvt_scan = convertSonarToSonarScan(bvt_sonar);
-        _sonar_scan.write(bvt_scan);
-
-        float temperature;
-        if (son.TryGetTemperature(&temperature))
-        {
-            _sonar_temperature.write((double)son.GetTemperature());
-        }
-    }
-    catch (BVTSDK::SdkException &e)
-    {
-        std::cout << e.ErrorName() << std::endl;
-        throw std::runtime_error(e.ErrorMessage());
     }
 }
 void Task::errorHook()
@@ -166,10 +164,8 @@ bool Task::setRange(double value)
 {
     head.SetStopRange(value);
     //check if the desired range was really set.
-    if (value != head.GetStopRange())
-    {
-        std::cout << "Required range is larger than allowed, the maximum value " <<
-                head.GetStopRange() << " was set." << std::endl;
+    if (value != head.GetStopRange()) {
+        std::cout << "Required range is larger than allowed, the maximum value " << head.GetStopRange() << " was set." << std::endl;
     }
     return (sonar_bvt_sdk::TaskBase::setRange(head.GetStopRange()));
 }
@@ -182,43 +178,41 @@ bool Task::setGain(double value)
 
 void Task::setFluidType(sonar_bvt_sdk::fluid_type::FluidType type)
 {
-    switch(type)
-    {
-    case sonar_bvt_sdk::fluid_type::Saltwater:
-        head.SetFluidType(BVTSDK::FluidType::Saltwater);
-        break;
-    case sonar_bvt_sdk::fluid_type::Freshwater:
-        head.SetFluidType(BVTSDK::FluidType::Freshwater);
-        break;
-    case sonar_bvt_sdk::fluid_type::Other:
-        head.SetFluidType(BVTSDK::FluidType::Other);
-        break;
-    default:
-        throw std::runtime_error("The fluid type could not be set");
+    switch (type) {
+        case sonar_bvt_sdk::fluid_type::Saltwater:
+            head.SetFluidType(BVTSDK::FluidType::Saltwater);
+            break;
+        case sonar_bvt_sdk::fluid_type::Freshwater:
+            head.SetFluidType(BVTSDK::FluidType::Freshwater);
+            break;
+        case sonar_bvt_sdk::fluid_type::Other:
+            head.SetFluidType(BVTSDK::FluidType::Other);
+            break;
+        default:
+            throw std::runtime_error("The fluid type could not be set");
     }
 }
 
 void Task::setImageResolution(sonar_bvt_sdk::image_resolution::ImageResolution resolution)
 {
-    switch(resolution)
-    {
-    case sonar_bvt_sdk::image_resolution::Off:
-        head.SetImageRes(BVTSDK::ImageRes::Off);
-        break;
-    case sonar_bvt_sdk::image_resolution::Low:
-        head.SetImageRes(BVTSDK::ImageRes::Low);
-        break;
-    case sonar_bvt_sdk::image_resolution::Medium:
-        head.SetImageRes(BVTSDK::ImageRes::Medium);
-        break;
-    case sonar_bvt_sdk::image_resolution::High:
-        head.SetImageRes(BVTSDK::ImageRes::High);
-        break;
-    case sonar_bvt_sdk::image_resolution::Auto:
-        head.SetImageRes(BVTSDK::ImageRes::Auto);
-        break;
-    default:
-        throw std::runtime_error("The image resolution could not be set");
+    switch (resolution) {
+        case sonar_bvt_sdk::image_resolution::Off:
+            head.SetImageRes(BVTSDK::ImageRes::Off);
+            break;
+        case sonar_bvt_sdk::image_resolution::Low:
+            head.SetImageRes(BVTSDK::ImageRes::Low);
+            break;
+        case sonar_bvt_sdk::image_resolution::Medium:
+            head.SetImageRes(BVTSDK::ImageRes::Medium);
+            break;
+        case sonar_bvt_sdk::image_resolution::High:
+            head.SetImageRes(BVTSDK::ImageRes::High);
+            break;
+        case sonar_bvt_sdk::image_resolution::Auto:
+            head.SetImageRes(BVTSDK::ImageRes::Auto);
+            break;
+        default:
+            throw std::runtime_error("The image resolution could not be set");
     }
 }
 
@@ -245,19 +239,18 @@ base::samples::SonarScan Task::convertSonarToSonarScan(base::samples::Sonar cons
     sonar_scan.time = sonar.time;
     sonar_scan.speed_of_sound = sonar.speed_of_sound;
     sonar_scan.start_bearing = sonar.bearings[0];
-    sonar_scan.angular_resolution = sonar.bearings[1]-sonar.bearings[0];
+    sonar_scan.angular_resolution = sonar.bearings[1] - sonar.bearings[0];
     sonar_scan.beamwidth_horizontal = sonar.beam_width;
-    sonar_scan.beamwidth_vertical = sonar.beam_height; 
+    sonar_scan.beamwidth_vertical = sonar.beam_height;
     sonar_scan.number_of_beams = sonar.beam_count;
     sonar_scan.number_of_bins = sonar.bin_count;
     sonar_scan.memory_layout_column = true;
     sonar_scan.polar_coordinates = true;
 
     sonar_scan.data.clear();
-    for (int i = 0; i < sonar.bins.size() ; ++i)
-    {
-        //normalize blueview reoslution(16bits) to 8bits
-        sonar_scan.data.push_back((uint8_t) sonar.bins[i]*255/65535);
+    for (int i = 0; i < sonar.bins.size(); ++i) {
+        // convert normalized data to 8 bits format
+        sonar_scan.data.push_back((uint8_t) (sonar.bins[i] * 255));
     }
 
     return sonar_scan;
