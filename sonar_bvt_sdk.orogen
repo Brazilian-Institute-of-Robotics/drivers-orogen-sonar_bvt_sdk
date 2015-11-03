@@ -8,16 +8,16 @@ import_types_from "base"
 task_context "Task" do
     needs_configuration
 
-	# Sonar ip address
+    # Sonar IPv4 address
     property("ip_address", "/std/string", "192.168.1.45")
 
-	# Sonar range, in meters
+    # Sonar range, in meters (1.0 - 30)
     property("range", "double", 30).dynamic
 
-	# Additional analog gain in percent (0.0 = 1db, 1.0 = 50db)
+    # Additional analog gain, in percent (0.0 = 1db, 1.0 = 50db)
     property("gain", "double", 0.9).dynamic
 
-	# Current speed of sound in water for this head in meters per second
+    # Current speed of sound in water for this head in meters, per second
     property("sound_speed", "int", 1500)
 
     # Maximum (+-) raw data from the ADC. If this threshold is reached the
@@ -25,25 +25,24 @@ task_context "Task" do
     # image.  The threshold is an integer ranging from 1 to 4096 (2^12)
     property("clipping_thresh", "int", 4096)
 
-	# Time variable analog gain in dB/meter. Note that the parameter is per
+    # Time variable analog gain in dB/meter. Note that the parameter is per
     # unit distance, not per unit time
     property("tvg_slope", "double", 0).dynamic
 
-	# Type of water the head (:Saltwater, :Freshwater or :Other)
+    # Type of water the head (Saltwater, Freshwater or Other)
     property("fluid_type", "sonar_bvt_sdk/fluid_type/FluidType", :Saltwater)
 
-	# Image processing resolution (:Off, :Low, :Medium, :High, :Auto)
-	property("image_resolution", "sonar_bvt_sdk/image_resolution/ImageResolution", :Auto)
+    # Image processing resolution (Off, Low, Medium, High, Auto)
+    property("image_resolution", "sonar_bvt_sdk/image_resolution/ImageResolution", :Auto)
 
-	# Sonar output (Sonar structure)
-    output_port("sonar_output", "/base/samples/Sonar")
+    # Sonar output (Sonar structure)
+    output_port("sonar_output", "base/samples/Sonar")
 
-	# Sonar output (in the old SonarScan structure) 
+    # Sonar output (SonarScan structure)
     output_port("sonar_scan", "/base/samples/SonarScan")
 
-	# Sonar temperature
+    # Sonar temperature, in degree celsius
     output_port("sonar_temperature", "double")
 
     periodic 0.1
 end
-

@@ -1,10 +1,4 @@
-#! /usr/bin/env ruby
-# -*- coding: utf-8 -*-
-# If you want to start the Microsoft Life Cam or the Gumstix camera e-CAM32
-# you should use the corresponding ruby run-script. 
-
 require 'orocos'
-#require 'vizkit'
 include Orocos
 Orocos.initialize
 
