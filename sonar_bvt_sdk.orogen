@@ -1,38 +1,48 @@
 name "sonar_bvt_sdk"
 
+using_library "bvt_sdk"
+
 import_types_from "sonar_bvt_sdkTypes.hpp"
 import_types_from "base"
-# Finally, it is pretty common that headers are directly loaded from an external
-# library. In this case, the library must be first used (the name is the
-# library's pkg-config name) and then the header can be used. Following Rock
-# conventions, a common use-case would be:
-#
-using_library "bvt_sdk"
-using_library "opencv"
 
 task_context "Task" do
     needs_configuration
 
-    property("ip_address", "/std/string")
-        .doc "Sonar ip address"
-#    property("bvt_monitor", "bool", false)
-#        .doc "If true, the component will write in bvt_monitor output port
-#              several BVT information, such as: temperature, ..."
-#    property("local_time_stamps", "bool", true)
-#        .doc "Set to true to modify ping timestamps by the local computer's (running the SDK) clock.
-#              *attention* Disable if this Sonar is connected to a pulse-per-second (PPS) signal."
-#    property("source_level", float, -1)
-#        .doc "Set the sonar's transmit source level. It is a ratio of desired value to max (0.0 to 1.0
-#              *attention* Non-negative value will ALWAYS disable the auto source level mode"
-#    property("auto_source_level", bool, true)
-#        .doc "If sonar supports this feature, it will automatically adjust the source level based on the
-#              current configured max range." 
+    # Sonar IPv4 address
+    property("ip_address", "/std/string", "192.168.1.45")
 
-    input_port "input", "/std/string"
+    # Sonar range, in meters (1.0 - 30)
+    property("range", "double", 30).dynamic
 
-    output_port "output", "int"
-#    output_port("bvt_monitor", "sonar_bvt_sdk/BvtMonitor")
+    # Additional analog gain, in percent (0.0 = 1db, 1.0 = 50db)
+    property("gain", "double", 0.9).dynamic
+
+    # Current speed of sound in water for this head in meters, per second
+    property("sound_speed", "int", 1500)
+
+    # Maximum (+-) raw data from the ADC. If this threshold is reached the
+    # entire signal is zeroed out so that clipping is not propagated through out the
+    # image.  The threshold is an integer ranging from 1 to 4096 (2^12)
+    property("clipping_thresh", "int", 4096)
+
+    # Time variable analog gain in dB/meter. Note that the parameter is per
+    # unit distance, not per unit time
+    property("tvg_slope", "double", 0).dynamic
+
+    # Type of water the head (Saltwater, Freshwater or Other)
+    property("fluid_type", "sonar_bvt_sdk/fluid_type/FluidType", :Saltwater)
+
+    # Image processing resolution (Off, Low, Medium, High, Auto)
+    property("image_resolution", "sonar_bvt_sdk/image_resolution/ImageResolution", :Auto)
+
+    # Sonar output (Sonar structure)
+    output_port("sonar_output", "base/samples/Sonar")
+
+    # Sonar output (SonarScan structure)
+    output_port("sonar_scan", "/base/samples/SonarScan")
+
+    # Sonar temperature, in degree celsius
+    output_port("sonar_temperature", "double")
 
     periodic 0.1
 end
-

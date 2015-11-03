@@ -1,18 +1,13 @@
 <package>
-  <description brief="Orogen component for the Blueview sonar">
+  <description brief="Orogen component for the Blueview MB1350-N">
   
   </description>
   <author>Diego Cesar/diego.cesar@fieb.org.br</author>
   <license></license>
-  <url>http://</url>
+  <url>https://github.com/Brazilian-Institute-of-Robotics/drivers-orogen-sonar_bvt_sdk/</url>
   <logo>http://</logo>
   <depend package="base/cmake" />
+  <depend package="base/types" />
+  <depend package="base/orogen/types" />
   <depend package="drivers/sonar_bvt_sdk" />
-  <!--
-   To add any dependencies use the depend tag
-  <depend package="dummy-dependency-0" />
-	...
-  <depend package="dummy-dependency-n-1" />
-  <depend package="dummy-dependency-n" />
-  -->
 </package>
