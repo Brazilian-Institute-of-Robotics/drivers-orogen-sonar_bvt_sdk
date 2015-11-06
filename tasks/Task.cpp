@@ -94,6 +94,8 @@ void Task::updateHook() {
             first_ping = false;
         }
 
+	bvt_sonar.bin_count = img_rtheta.GetHeight();
+
         // get the raw data pointer
         unsigned short *bit_buffer = img_rtheta.GetBits();
         int beams = bvt_sonar.beam_count;
@@ -211,7 +213,6 @@ void Task::setSonarParameters(BVTSDK::Ping &ping, BVTSDK::MagImage &img_rtheta) 
     bvt_sonar.beam_width = base::Angle::fromDeg(max_angle - min_angle);
     bvt_sonar.beam_height = base::Angle::fromDeg(1); // from datasheet of Blueview MB1350-N
     bvt_sonar.beam_count = img_rtheta.GetWidth();
-    bvt_sonar.bin_count = img_rtheta.GetHeight();
 
     float angular_resolution = bvt_sonar.beam_width.getDeg() / bvt_sonar.beam_count;
     bvt_sonar.setRegularBeamBearings(base::Angle::fromDeg(min_angle), base::Angle::fromDeg(angular_resolution));
