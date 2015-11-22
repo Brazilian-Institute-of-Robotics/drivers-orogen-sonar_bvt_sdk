@@ -117,7 +117,7 @@ void Task::updateHook() {
         // display sonar data (SonarScan structure)
         base::samples::SonarScan bvt_scan;
         bvt_scan = convertSonarToSonarScan(bvt_sonar);
-        _sonar_scan.write(bvt_scan);
+        _sonar_samples.write(bvt_scan);
 
         // display sonar temperature (in degree celsius)
         float temperature;
