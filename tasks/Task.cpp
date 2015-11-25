@@ -143,10 +143,6 @@ void Task::cleanupHook()
 }
 
 bool Task::setRange(double value) {
-    // check if the desired range is valid
-    if (value > head.GetMaximumRange())
-        return false;
-
     head.SetStopRange(value);
     return (sonar_bvt_sdk::TaskBase::setRange(value));
 }
