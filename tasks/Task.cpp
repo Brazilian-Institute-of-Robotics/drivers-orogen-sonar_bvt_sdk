@@ -112,12 +112,12 @@ void Task::updateHook() {
         bvt_sonar.time = base::Time::now();
 
         // display sonar data (Sonar structure)
-        _sonar_output.write(bvt_sonar);
+        _sonar_samples.write(bvt_sonar);
 
         // display sonar data (SonarScan structure)
         base::samples::SonarScan bvt_scan;
         bvt_scan = convertSonarToSonarScan(bvt_sonar);
-        _sonar_samples.write(bvt_scan);
+        _sonar_scan_samples.write(bvt_scan);
 
         // display sonar temperature (in degree celsius)
         float temperature;
@@ -231,7 +231,7 @@ base::samples::SonarScan Task::convertSonarToSonarScan(base::samples::Sonar cons
     sonar_scan.beamwidth_vertical = sonar.beam_height;
     sonar_scan.number_of_beams = sonar.beam_count;
     sonar_scan.number_of_bins = sonar.bin_count;
-    sonar_scan.memory_layout_column = true;
+    sonar_scan.memory_layout_column = false;
     sonar_scan.polar_coordinates = true;
 
     // convert blueview raw data to 8 bits
