@@ -32,7 +32,7 @@ Orocos.run 'sonar_bvt_sdk::Task' => 'bvt' do
   end
   
   ## Connect SonarWidget with Gemini ##
-  bvt_sdk.sonar_scan.connect_to sonar_gui  
+  bvt_sdk.sonar_samples.connect_to sonar_gui
   
   ## Start the task ##
   bvt_sdk.start
