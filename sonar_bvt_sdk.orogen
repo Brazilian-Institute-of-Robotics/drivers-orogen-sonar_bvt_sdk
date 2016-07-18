@@ -38,9 +38,6 @@ task_context "Task" do
     # Sonar output (Sonar structure)
     output_port("sonar_samples", "base/samples/Sonar")
 
-    # Sonar output (SonarScan structure)
-    output_port("sonar_scan_samples", "/base/samples/SonarScan")
-
     # Sonar temperature, in degree celsius
     output_port("sonar_temperature", "double")
 

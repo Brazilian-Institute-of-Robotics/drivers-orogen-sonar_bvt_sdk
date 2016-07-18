@@ -114,11 +114,6 @@ void Task::updateHook() {
         // display sonar data (Sonar structure)
         _sonar_samples.write(bvt_sonar);
 
-        // display sonar data (SonarScan structure)
-        base::samples::SonarScan bvt_scan;
-        bvt_scan = convertSonarToSonarScan(bvt_sonar);
-        _sonar_scan_samples.write(bvt_scan);
-
         // display sonar temperature (in degree celsius)
         float temperature;
         if (son.TryGetTemperature(&temperature)) {
@@ -218,27 +213,4 @@ void Task::setSonarParameters(BVTSDK::Ping &ping, BVTSDK::MagImage &img_rtheta) 
     bvt_sonar.setRegularBeamBearings(base::Angle::fromDeg(min_angle), base::Angle::fromDeg(angular_resolution));
 
     bvt_sonar.validate();
-}
-
-base::samples::SonarScan Task::convertSonarToSonarScan(base::samples::Sonar const &sonar) {
-    base::samples::SonarScan sonar_scan;
-
-    sonar_scan.time = sonar.time;
-    sonar_scan.speed_of_sound = sonar.speed_of_sound;
-    sonar_scan.start_bearing = sonar.bearings[0];
-    sonar_scan.angular_resolution = sonar.bearings[1] - sonar.bearings[0];
-    sonar_scan.beamwidth_horizontal = sonar.beam_width;
-    sonar_scan.beamwidth_vertical = sonar.beam_height;
-    sonar_scan.number_of_beams = sonar.beam_count;
-    sonar_scan.number_of_bins = sonar.bin_count;
-    sonar_scan.memory_layout_column = false;
-    sonar_scan.polar_coordinates = true;
-
-    // convert blueview raw data to 8 bits
-    sonar_scan.data.clear();
-    for (int i = 0; i < sonar.bins.size(); ++i) {
-        sonar_scan.data.push_back((uint8_t) (sonar.bins[i] * 255));
-    }
-
-    return sonar_scan;
 }

@@ -5,7 +5,6 @@
 
 #include "sonar_bvt_sdk/TaskBase.hpp"
 #include <bvt_sdk.h>
-#include <base/samples/SonarScan.hpp>
 #include <base/samples/Sonar.hpp>
 
 
@@ -39,7 +38,6 @@ namespace sonar_bvt_sdk{
         void setFluidType(sonar_bvt_sdk::fluid_type::FluidType type);
         void setImageResolution(sonar_bvt_sdk::image_resolution::ImageResolution resolution);
         void setSonarParameters(BVTSDK::Ping &ping, BVTSDK::MagImage &img_rtheta);
-        base::samples::SonarScan convertSonarToSonarScan(base::samples::Sonar const &sonar);
         virtual bool setGain(double value);
         virtual bool setRange(double value);
         virtual bool setTvg_slope(double value);
